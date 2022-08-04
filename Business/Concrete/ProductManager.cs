@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 //using DataAccess.Concrete.InMemory;
 using Entities.Concrete;
@@ -18,6 +19,22 @@ namespace Business.Concrete
         {
             _productDal = productDal;
         }
+
+        public IResult Add(Product product)
+        {
+            //iş kodları
+
+            if (product.ProductName.Length < 2)
+            {
+                return new ErrorResult("Ürün ismi min 2 karakter olmalıdır");
+
+            }
+
+            _productDal.Add(product);
+
+            return new SuccessResult("ürün eklendi"); //neden new yaptık?
+        }
+
         public List<Product> GetAll()
         {
             //iş kodları
@@ -33,6 +50,11 @@ namespace Business.Concrete
         public List<Product> GetAllByCategoryId(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public Product GetById(int productId)
+        {
+            return _productDal.Get(p => p.ProductID == productId);
         }
 
         public List<Product> GetByUnitPrice(decimal min, decimal max)
