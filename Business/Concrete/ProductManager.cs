@@ -12,8 +12,8 @@ using System.Text;
 namespace Business.Concrete
 {
    
-    public class ProductManager : IProductService
-       
+    public class ProductManager : IProductService   
+       //ProductManager IProductDal a bağımlı - interfaceler referans tutucudur.
     {
         IProductDal _productDal;
 
