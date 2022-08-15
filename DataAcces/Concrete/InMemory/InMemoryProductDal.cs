@@ -43,15 +43,15 @@ namespace DataAccess.Concrete.InMemory
 
             _products.Remove(productToDelete);
 
-            //foreach (var p in _products)
-            //{
-            //    if(product.ProductID== p.ProductID)
-            //    {
-            //        producToDelete = p;
-            //    }
+             /*foreach (var p in _products)
+            {
+                if(product.ProductID== p.ProductID)
+                {
+                    producToDelete = p;
+                }
 
-            //}
-
+            }
+            */
         }
         public List<Product> GetAll()
         {
