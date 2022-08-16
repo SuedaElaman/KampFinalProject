@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
@@ -17,28 +18,39 @@ namespace Business.Concrete
 {
    
     public class ProductManager : IProductService   
+
+
        //ProductManager IProductDal a bağımlı - interfaceler referans tutucudur.
     {
         IProductDal _productDal;
+         //ILogger _logger;
 
         public ProductManager(IProductDal productDal)
         {
             _productDal = productDal;
+           
         }
 
         [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
+            var result = _productDal.GetAll(p =>p.CategoryID == product.CategoryID).Count;
+            if(result >= 15)
+            {
+                return new ErrorResult(Messages.ProductCountOfCategoryError);
+            }
+
             //business codes
-            //validation
+            if(CheckIfProductCountOfCategoryCorrect(product.CategoryID).Success);
+            {
 
+                _productDal.Add(product);
 
-            
+                return new SuccessResult(Messages.ProductAdded);
+            }
+            return new ErrorResult();
 
-
-            _productDal.Add(product);
-
-            return new SuccessResult(Messages.ProductAdded); 
+  
         }
 
         public IDataResult <List<Product>> GetAll()
@@ -81,24 +93,29 @@ namespace Business.Concrete
 
         }
 
-        //IDataResult<List<Product>> IProductService.GetAllByCategoryId(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        [ValidationAspect(typeof(ProductValidator))]
+        public IResult Update(Product product)
+        {
+            var result = _productDal.GetAll(p =>p.CategoryID == product.CategoryID).Count;
+            if (result >= 10)
+            {
+                return new ErrorResult(Messages.ProductCountOfCategoryError);
+            }
+            throw new NotImplementedException();
 
-        //IDataResult<Product> IProductService.GetById(int productId)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        }
 
-        //IDataResult<List<Product>> IProductService.GetByUnitPrice(decimal min, decimal max)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        private IResult CheckIfProductCountOfCategoryCorrect(int categoryId)
+        {
+            var result = _productDal.GetAll(p=>p.CategoryID == categoryId).Count;
+            if (result >= 15)
+            {
+                return new ErrorResult(Messages.ProductCountOfCategoryError);
+            }
+            return new SuccessResult();
+            
 
-        //IDataResult<List<ProductDetailDto>> IProductService.GetProductDetails()
-        //{
-        //    throw new NotImplementedException();
-        //}
+        }
+
     }
 }
