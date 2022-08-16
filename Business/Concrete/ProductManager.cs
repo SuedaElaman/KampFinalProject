@@ -12,6 +12,7 @@ using Entities.DTOs;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -27,30 +28,26 @@ namespace Business.Concrete
 
         public ProductManager(IProductDal productDal)
         {
-            _productDal = productDal;
+            _productDal = productDal; 
            
         }
 
         [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
-            var result = _productDal.GetAll(p =>p.CategoryID == product.CategoryID).Count;
-            if(result >= 15)
-            {
-                return new ErrorResult(Messages.ProductCountOfCategoryError);
-            }
-
+           
             //business codes
-            if(CheckIfProductCountOfCategoryCorrect(product.CategoryID).Success);
+            if(CheckIfProductCountOfCategoryCorrect(product.CategoryID).Success)
             {
+                if (CheckIfProductNameExists(product.ProductName).Success)
+                {
 
-                _productDal.Add(product);
+                    _productDal.Add(product);
+                    return new SuccessResult(Messages.ProductAdded);
+                }
 
-                return new SuccessResult(Messages.ProductAdded);
             }
             return new ErrorResult();
-
-  
         }
 
         public IDataResult <List<Product>> GetAll()
@@ -114,6 +111,15 @@ namespace Business.Concrete
             }
             return new SuccessResult();
             
+        }
+        private IResult CheckIfProductNameExists(string productName)
+        {
+            var result = _productDal.GetAll(p => p.ProductName ==productName).Any();
+            if (result)
+            {
+                return new ErrorResult(Messages.ProductNameAlreadyExists);
+            }
+            return new SuccessResult();
 
         }
 
