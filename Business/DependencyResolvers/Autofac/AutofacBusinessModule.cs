@@ -19,8 +19,11 @@ namespace Business.DependencyResolvers.Autofac
         {
             builder.RegisterType<ProductManager>().As<IProductService>().SingleInstance(); // bu yaptığımız şey startuptaki 36-38 satırları
             builder.RegisterType<EfProductDal>().As<IProductDal>().SingleInstance();
-            builder.RegisterType<FileLogger>().As<ILogger>().SingleInstance();
-            
+            //builder.RegisterType<FileLogger>().As<ILogger>().SingleInstance();
+
+            builder.RegisterType<CategoryManager>().As<ICategoryServices>().SingleInstance(); 
+            builder.RegisterType<EfCategoryDal>().As<ICategoryDal>().SingleInstance();
+
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 
             builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
